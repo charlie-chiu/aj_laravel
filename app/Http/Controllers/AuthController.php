@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Auth;
 
 class AuthController extends Controller
 {
@@ -13,11 +14,33 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        dump($request->get("email"));
-        dump($request->get("password"));
+        $username = $request->get("name");
+        $password = $request->get("password");
+
+        //dev
+
+        if ($username === "charlie") {
+            Auth::loginUsingId(1);
+            dump(Auth::user());
+        } else {
+            return redirect('home');
+        }
+
+        //-----------------------
+
         // 若無資料則進行註冊作業
         // auth service -> validate or register
+        /*
+         * if exists() {
+         *     validate()
+         *
+         *     redirect if invalid
+         * } else {
+         *     register()
+         * }
+         */
 
+        return redirect('home');
     }
 
     public function home()

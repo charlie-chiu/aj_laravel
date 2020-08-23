@@ -11,16 +11,8 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/home', 'AuthController@home')->middleware('auth')->name('home');
 
-Route::get('/auth', 'AuthController@index');
-
-Route::get('/home', 'AuthController@home')->name('home');
-
-Route::post('/login', 'AuthController@index')->name("login");
-
-
-
-//Auth::routes();
+Route::get('/', 'AuthController@index');
+Route::get('/login', 'AuthController@index')->name("login");
+Route::post('/login', 'AuthController@login');
