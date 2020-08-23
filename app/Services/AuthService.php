@@ -27,4 +27,13 @@ class AuthService
             'password' => $password,
         ]);
     }
+
+    public function register(string $username, string $password): void
+    {
+        // create user
+        $user = $this->userRepository->createUser($username, $password);
+
+        // login with user
+        Auth::login($user);
+    }
 }

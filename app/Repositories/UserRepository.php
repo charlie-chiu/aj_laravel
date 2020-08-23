@@ -4,6 +4,7 @@
 namespace App\Repositories;
 
 use App\User;
+use Hash;
 
 class UserRepository
 {
@@ -20,5 +21,17 @@ class UserRepository
     public function findUserByName(string $username): ?User
     {
         return $this->userModel::where('name', $username)->first();
+    }
+
+    public function createUser(string $username, string $password): User
+    {
+        $user = $this->userModel->newInstance([
+                'name' => $username,
+                'password' => Hash::make($password),
+            ]
+        );
+        $user->save();
+
+        return $user;
     }
 }
