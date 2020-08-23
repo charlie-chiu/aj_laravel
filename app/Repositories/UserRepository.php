@@ -8,10 +8,7 @@ use Hash;
 
 class UserRepository
 {
-    /**
-     * @var User
-     */
-    private $userModel;
+    private User $userModel;
 
     public function __construct(User $userModel)
     {

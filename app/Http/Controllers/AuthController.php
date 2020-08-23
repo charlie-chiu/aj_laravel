@@ -24,14 +24,13 @@ class AuthController extends Controller
         $username = $request->get("name");
         $password = $request->get("password");
 
-        if ($this->authService->isUserExists($username)) {
-            if (!$this->authService->attempt($username, $password)) {
-                return view('login', [
-                    'login_fail' => sprintf("try login %s with incorrect password", $username)
-                ]);
-            }
-        } else {
+        if (!$this->authService->isUserExists($username)) {
             $this->authService->register($username, $password);
+        } else if (!$this->authService->attempt($username, $password)) {
+
+            return view('login', [
+                'login_fail' => sprintf("try login %s with incorrect password", $username)
+            ]);
         }
 
         return redirect('home');
