@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AuthService;
 use Illuminate\Http\Request;
-use Auth;
 
 class AuthController extends Controller
 {
+    private AuthService $authService;
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
     public function index()
     {
         return view('login');
@@ -17,28 +24,13 @@ class AuthController extends Controller
         $username = $request->get("name");
         $password = $request->get("password");
 
-        //dev
-
-        if ($username === "charlie") {
-            Auth::loginUsingId(1);
-            dump(Auth::user());
+        if ($this->authService->isUserExists($username) && !$this->authService->attempt($username, $password)) {
+            return view('login', [
+                'login_fail' => sprintf("try login %s with incorrect password", $username)
+            ]);
         } else {
-            return redirect('home');
+            //register
         }
-
-        //-----------------------
-
-        // 若無資料則進行註冊作業
-        // auth service -> validate or register
-        /*
-         * if exists() {
-         *     validate()
-         *
-         *     redirect if invalid
-         * } else {
-         *     register()
-         * }
-         */
 
         return redirect('home');
     }
