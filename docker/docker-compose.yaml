@@ -11,7 +11,7 @@ services:
       - "../:/var/www/html"
   php:
     # my PHP image
-    image: marmot00/php_fpm:7.4
+    image: marmot00/php-fpm:7.4
     container_name: "aj_laravel_php"
     ports:
       - 9000:9000
