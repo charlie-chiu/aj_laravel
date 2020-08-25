@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\ScrapeService;
+use App\Services\Click108Scraper;
 
 class ScrapeAstro extends Command
 {
@@ -22,19 +22,20 @@ class ScrapeAstro extends Command
     protected $description = 'Scrape astro.click108.com.tw';
 
     /**
-     * @var ScrapeService
+     * @var Click108Scraper
      */
-    private $scrapeService;
+    private $click108Scraper;
 
     /**
      * Create a new command instance.
      *
+     * @param Click108Scraper $scraper
      * @return void
      */
-    public function __construct(ScrapeService $scrapeService)
+    public function __construct(Click108Scraper $scraper)
     {
         parent::__construct();
-        $this->scrapeService = $scrapeService;
+        $this->click108Scraper = $scraper;
     }
 
     /**
@@ -44,7 +45,7 @@ class ScrapeAstro extends Command
      */
     public function handle()
     {
-        echo $this->scrapeService->scrapeClick108() . "\n";
+        $this->click108Scraper->scrapeDailyHoroscope();
 
         echo "task done\n";
     }
