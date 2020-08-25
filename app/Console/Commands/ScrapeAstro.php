@@ -44,7 +44,7 @@ class ScrapeAstro extends Command
      */
     public function handle()
     {
-        echo $this->scrapeService->echoSomething() . "\n";
+        echo $this->scrapeService->scrapeClick108() . "\n";
 
         echo "task done\n";
     }
