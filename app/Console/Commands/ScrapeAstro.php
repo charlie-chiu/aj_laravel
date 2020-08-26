@@ -45,7 +45,7 @@ class ScrapeAstro extends Command
      */
     public function handle()
     {
-        $this->click108Scraper->scrapeDailyHoroscope();
+        $this->click108Scraper->scrapeAllAndStore();
 
         echo "task done\n";
     }

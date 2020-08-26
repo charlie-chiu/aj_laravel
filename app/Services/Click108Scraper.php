@@ -6,23 +6,28 @@ namespace App\Services;
 
 use Goutte;
 use Symfony\Component\DomCrawler\Crawler;
-use App\DailyHoroscope;
+use App\Struct\DailyHoroscope;
+use App\DailyHoroscope as HoroscopeModel;
 
 class Click108Scraper
 {
-
-
-    /*
-     * url
-     * https://astro.click108.com.tw/daily_2.php?iAcDay=2020-08-24&iAstro=2
-     *
-     * from 0 ~ 11
-     */
-
-
-    public function scrapeDailyHoroscope(): DailyHoroscope
+    public function scrapeAllAndStore()
     {
-        $url = 'https://astro.click108.com.tw/daily_0.php?iAstro=0#lucky';
+        $horoscopes = [];
+        for ($starSign = 0; $starSign < 12; $starSign++) {
+            $horoscopes[] = $this->scrapeDailyHoroscope($starSign);
+        }
+
+        foreach ($horoscopes as $horoscope) {
+            $this->save($horoscope);
+        }
+
+    }
+
+    public function scrapeDailyHoroscope(int $starSignIndex): DailyHoroscope
+    {
+        $date = date("Y-m-d");
+        $url = $this->makeDailyHoroscopeURL($date, $starSignIndex);
 
         /** @var Crawler $crawler */
         $crawler = Goutte::request('GET', $url);
@@ -37,28 +42,8 @@ class Click108Scraper
         });
         $starSign = $this->parseStarSign($starSign);
 
-//        $overallScore = $this->parseScore($content[0]);
-//        $overallContent = $content[1];
-//        $relationshipScore = $this->parseScore($content[2]);
-//        $relationshipContent = $content[3];
-//        $careerScore = $this->parseScore($content[4]);
-//        $careerContent = $content[5];
-//        $financeScore = $this->parseScore($content[6]);
-//        $financeContent = $content[7];
-//
-//        dump([
-//            $starSign,
-//            $overallScore,
-//            $overallContent,
-//            $relationshipScore,
-//            $relationshipContent,
-//            $careerScore,
-//            $careerContent,
-//            $financeScore,
-//            $financeContent,
-//        ]);
-
-        $horoscope = New DailyHoroscope();
+        $horoscope = new DailyHoroscope();
+        $horoscope->date = $date;
         $horoscope->starSign = $starSign;
         $horoscope->overallScore = $this->parseScore($content[0]);
         $horoscope->overallContent = $content[1];
@@ -69,15 +54,24 @@ class Click108Scraper
         $horoscope->financeScore = $this->parseScore($content[6]);
         $horoscope->financeContent = $content[7];
 
-        dump($horoscope);
-
         return $horoscope;
     }
 
     public function save(DailyHoroscope $horoscope)
     {
-        throw (new \Exception("save failed"));
-        //
+        $model = new HoroscopeModel;
+        $model->date = $horoscope->date;
+        $model->star_sign = $horoscope->starSign;
+        $model->overall_score = $horoscope->overallScore;
+        $model->overall_content = $horoscope->overallContent;
+        $model->relationship_score = $horoscope->relationshipScore;
+        $model->relationship_content = $horoscope->relationshipContent;
+        $model->career_score = $horoscope->careerScore;
+        $model->career_content = $horoscope->careerContent;
+        $model->finance_score = $horoscope->financeScore;
+        $model->finance_content = $horoscope->financeContent;
+
+        $model->save();
     }
 
     private function parseStarSign(string $text): string
@@ -88,5 +82,12 @@ class Click108Scraper
     private function parseScore(string $star): int
     {
         return substr_count($star, '★');
+    }
+
+    public function makeDailyHoroscopeURL(string $date, int $starSignIndex): string
+    {
+        $format = "https://astro.click108.com.tw/daily_%d.php?iAcDay=%s&iAstro=%d";
+
+        return sprintf($format, $starSignIndex, $date, $starSignIndex);
     }
 }

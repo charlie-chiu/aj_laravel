@@ -1,19 +1,10 @@
 <?php
 
-
 namespace App;
 
+use Illuminate\Database\Eloquent\Model;
 
-class DailyHoroscope
+class DailyHoroscope extends Model
 {
-    public string $starSign;
-    public string $date;
-    public int $overallScore;
-    public string $overallContent;
-    public int $relationshipScore;
-    public string $relationshipContent;
-    public int $careerScore;
-    public string $careerContent;
-    public int $financeScore;
-    public string $financeContent;
+    protected $table = 'daily_horoscopes';
 }
